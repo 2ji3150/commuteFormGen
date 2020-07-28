@@ -1,0 +1,103 @@
+﻿<Window x:Class="commuteFormGen.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:commuteFormGen" 
+        xmlns:dat="clr-namespace:System.Windows.Data;assembly=PresentationFramework"
+        xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+        mc:Ignorable="d"
+        Title="CAPA交通費精算" Height="450" Width="800">
+
+    <Window.Resources>
+        <CollectionViewSource Source="{Binding Trips_left}" x:Key="cv_left">
+            <CollectionViewSource.GroupDescriptions>
+                <dat:PropertyGroupDescription PropertyName="ShortDate"/>
+            </CollectionViewSource.GroupDescriptions>
+            <CollectionViewSource.SortDescriptions>
+                <scm:SortDescription PropertyName="Date"/>
+                <scm:SortDescription PropertyName="Leave"/>
+            </CollectionViewSource.SortDescriptions>
+        </CollectionViewSource>
+        <CollectionViewSource Source="{Binding Trips_right}" x:Key="cv_right">
+            <CollectionViewSource.GroupDescriptions>
+                <dat:PropertyGroupDescription PropertyName="ShortDate"/>
+            </CollectionViewSource.GroupDescriptions>
+            <CollectionViewSource.SortDescriptions>
+                <scm:SortDescription PropertyName="Date"/>
+                <scm:SortDescription PropertyName="Leave"/>
+            </CollectionViewSource.SortDescriptions>
+        </CollectionViewSource>
+
+        <DataTemplate x:Key="GroupHeaderTemplate_left">
+            <StackPanel Background="#E0F2F1">
+                <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="35"/>
+                <Rectangle Height="2" Fill="DarkBlue"/>
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="GroupHeaderTemplate_right">
+            <StackPanel Background="#E0F7FA">
+                <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="35"/>
+                <Rectangle Height="2" Fill="DarkBlue"/>
+            </StackPanel>
+        </DataTemplate>
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="50"/>
+        </Grid.RowDefinitions>
+        <Label Content="訪問" Grid.Column="0" Grid.Row="0" FontSize="36" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <Label Content="通勤" Grid.Column="1" Grid.Row="0" FontSize="36" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <ListView  Name="lv_left" ItemsSource="{Binding Source={StaticResource cv_left}}" SelectedItem="{Binding SelectedTrip_left}" SelectionMode="Single" Grid.Column="0" Grid.Row="1">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding Enter}" Foreground="Blue" FontSize="30"/>
+                            <TextBlock Text="  ➡  " Foreground="Red"  FontSize="30"/>
+                            <TextBlock Text="{Binding Leave}" Foreground="DarkBlue" FontSize="30"/>
+                        </StackPanel>
+                        <TextBlock Text="{Binding Money}"  FontSize="20"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            <ListView.GroupStyle>
+                <GroupStyle HeaderTemplate="{StaticResource GroupHeaderTemplate_left}"/>
+            </ListView.GroupStyle>
+        </ListView>
+        <ListView Name="lv_right" ItemsSource="{Binding Source={StaticResource cv_right}}" SelectedItem="{Binding SelectedTrip_right}" SelectionMode="Single"  Grid.Column="1" Grid.Row="1">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding Enter}" Foreground="Blue" FontSize="30"/>
+                            <TextBlock Text="  ➡  " Foreground="Red"  FontSize="30"/>
+                            <TextBlock Text="{Binding Leave}" Foreground="DarkBlue" FontSize="30"/>
+                        </StackPanel>
+                        <TextBlock Text="{Binding Money}"  FontSize="20"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            <ListView.GroupStyle>
+                <GroupStyle HeaderTemplate="{StaticResource GroupHeaderTemplate_right}"/>
+            </ListView.GroupStyle>
+        </ListView>
+        <Grid Grid.ColumnSpan="2" Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Button Content="コピー" Grid.Column="0" Click="CopyButton_Click"/>
+            <Button Content="削除"  Grid.Column="1" Click="RemoveButton_Click"/>
+            <Button Content="移動"  Grid.Column="2" Click="MoveButton_Click"/>
+        </Grid>
+    </Grid>
+</Window>
