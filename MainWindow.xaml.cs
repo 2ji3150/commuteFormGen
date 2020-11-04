@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -23,6 +21,7 @@ namespace commuteFormGen {
 
             if (!File.Exists("teiki.txt")) return;
             var lines = File.ReadAllLines("teiki.txt");
+
             foreach (var line in lines) {
 
                 var contents = line.Split('\t');
@@ -33,7 +32,7 @@ namespace commuteFormGen {
                 if (!int.TryParse(contents[6], out int money)) continue;
 
                 if (money >= 0) continue;
-                if (date.Month != DateTime.Now.Month) continue;
+                if (date.Month != DateTime.Now.Month - 1) continue;
 
                 string enter = contents[2];
                 string leave = contents[4];
@@ -65,9 +64,9 @@ namespace commuteFormGen {
 
         public void CopyButton_Click(object sender, RoutedEventArgs e) {
             IEnumerable<string> tripLines = null;
-            static string func(Trip t) => string.Join('\t', t.Date, t.Enter, t.Leave, t.Coast);
-            if (VM.SelectedTrip_left != null) tripLines = VM.Trips_left.Select(func);
-            else if (VM.SelectedTrip_right != null) tripLines = VM.Trips_right.Select(func);
+            static string func(Trip t) => string.Join('\t', t.Date, t.Enter.Trim(), t.Leave.Trim(), t.Coast);
+            if (VM.SelectedTrip_left != null) tripLines = VM.Trips_left.OrderBy(trip => trip.Date).ThenBy(trip => trip.Enter).Select(func);
+            else if (VM.SelectedTrip_right != null) tripLines = VM.Trips_right.OrderBy(trip => trip.Date).ThenBy(trip => trip.Enter).Select(func);
             else return;
 
             Clipboard.SetText(string.Join(Environment.NewLine, tripLines));
